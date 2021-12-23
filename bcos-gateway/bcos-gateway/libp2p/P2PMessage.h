@@ -23,6 +23,7 @@
 #include <bcos-framework/libutilities/Common.h>
 #include <bcos-gateway/libnetwork/Common.h>
 #include <bcos-gateway/libnetwork/Message.h>
+#include <bcos-gateway/libp2p/P2PCompressMessage.h>
 
 namespace bcos
 {
@@ -170,6 +171,28 @@ public:
         auto message = std::make_shared<P2PMessage>();
         return message;
     }
+};
+
+class P2PCompressMessageFactory : public P2PMessageFactory
+{
+public:
+    using Ptr = std::shared_ptr<P2PCompressMessageFactory>;
+    virtual ~P2PCompressMessageFactory() {}
+
+public:
+    Message::Ptr buildMessage() override
+    {
+        auto m_message = std::make_shared<P2PCompressMessage>();
+        return m_message;
+    }
+
+    void setCompressEnabled(bool _CompressEnabled)
+    {
+        m_message.setCompressEnabled(_CompressEnabled);
+    }
+
+private:
+    P2PMessage::Ptr m_message;
 };
 
 inline std::ostream& operator<<(std::ostream& _out, const P2PMessage _p2pMessage)

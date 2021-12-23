@@ -97,6 +97,8 @@ private:
     // cert config for ssl connection
     CertConfig m_certConfig;
     SMCertConfig m_smCertConfig;
+    // control network package compress
+    bool m_compressEnabled;
 
     std::string m_certPath;
     std::string m_nodePath;
