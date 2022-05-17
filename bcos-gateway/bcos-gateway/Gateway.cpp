@@ -201,7 +201,7 @@ void Gateway::asyncSendMessageByNodeID(const std::string& _groupID, NodeIDPtr _s
                 {
                     GATEWAY_LOG(ERROR)
                         << LOG_BADGE("Retry") << LOG_DESC("network callback")
-                        << LOG_KV("timecost", (utcTime() - startT)) << log_kv("seq", seq)
+                        << LOG_KV("timecost", (utcTime() - startT)) << LOG_KV("seq", seq)
                         << LOG_KV("p2pid", p2pID) << LOG_KV("errorCode", e.errorCode())
                         << LOG_KV("errorMessage", e.what());
                     // try again
