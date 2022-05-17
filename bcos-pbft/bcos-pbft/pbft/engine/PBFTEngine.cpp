@@ -956,7 +956,8 @@ void PBFTEngine::triggerTimeout(bool _incTimeout)
         m_config->view(), m_config->committedProposal()->index());
     // notify the latest proposal index to the sync module when timeout to enable
     // syncing
-    m_cacheProcessor->notifyCommittedProposalIndex(m_config->committedProposal()->index());
+    // m_cacheProcessor->notifyCommittedProposalIndex(m_config->committedProposal()->index());
+    m_cacheProcessor->notifyCommittedProposalIndex(m_config->expectedCheckPoint() - 1);
     // broadcast viewchange and try to the new-view phase
     broadcastViewChangeReq();
 }
