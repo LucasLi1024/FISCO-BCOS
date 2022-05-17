@@ -513,6 +513,18 @@ void FrontService::handleCallback(bcos::Error::Ptr _error, bytesConstRef _payLoa
 void FrontService::onReceiveMessage(const std::string& _groupID, bcos::crypto::NodeIDPtr _nodeID,
     bytesConstRef _data, ReceiveMsgFunc _receiveMsgCallback)
 {
+    // response to the gateway declare that the message has been received
+    if (_receiveMsgCallback)
+    {
+        if (m_threadPool)
+        {
+            m_threadPool->enqueue([_receiveMsgCallback]() { _receiveMsgCallback(nullptr); });
+        }
+        else
+        {
+            _receiveMsgCallback(nullptr);
+        }
+    }
     try
     {
         auto message = messageFactory()->buildMessage();
@@ -568,18 +580,6 @@ void FrontService::onReceiveMessage(const std::string& _groupID, bcos::crypto::N
     catch (const std::exception& e)
     {
         FRONT_LOG(ERROR) << "onReceiveMessage" << LOG_KV("error", boost::diagnostic_information(e));
-    }
-
-    if (_receiveMsgCallback)
-    {
-        if (m_threadPool)
-        {
-            m_threadPool->enqueue([_receiveMsgCallback]() { _receiveMsgCallback(nullptr); });
-        }
-        else
-        {
-            _receiveMsgCallback(nullptr);
-        }
     }
 }
 

@@ -183,13 +183,13 @@ void Service::updateUnconnectedEndpointToWservice()
     RecursiveGuard l(x_nodes);
     for (auto const& it : m_staticNodes)
     {
-        SERVICE_LOG(INFO) << "####### updateUnconnectedEndpointToWservice m_staticNodes"
+        SERVICE_LOG(INFO) << LOG_DESC("updateUnconnectedEndpointToWservice")
                           << LOG_KV("nodeIPpoint host", it.first.address())
                           << LOG_KV("nodeIPpoint port", it.first.port())
                           << LOG_KV("p2pid", it.second);
 
-        // p2pID is a empty string means that NodeIPEndpoint is unconnecnted, so update those
-        // unconnecnted NodeIPEndpoints to wsService and wsService can reconnect them.
+        // p2pID is a empty string means that NodeIPEndpoint is unconnected, so update those
+        // unconnected NodeIPEndpoints to wsService and wsService can reconnect them.
         if (it.second == "")
         {
             reconnectedPeers->insert(it.first);
@@ -198,7 +198,7 @@ void Service::updateUnconnectedEndpointToWservice()
 
     for (auto& peer : *reconnectedPeers)
     {
-        SERVICE_LOG(INFO) << "####### updateUnconnectedEndpointToWservice peer"
+        SERVICE_LOG(INFO) << LOG_DESC("updateUnconnectedEndpointToWservice")
                           << LOG_KV("peer host", peer.address())
                           << LOG_KV("peer port", peer.port());
     }

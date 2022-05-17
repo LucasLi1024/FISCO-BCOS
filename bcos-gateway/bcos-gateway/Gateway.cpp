@@ -190,7 +190,10 @@ void Gateway::asyncSendMessageByNodeID(const std::string& _groupID, NodeIDPtr _s
             }
             auto p2pID = randomChooseP2pID();
             auto self = shared_from_this();
-            auto callback = [self, p2pID](NetworkException e, std::shared_ptr<P2PSession> session,
+            auto startT = utcTime();
+            auto seq = m_p2pMessage->seq();
+            auto callback = [self, startT, seq, p2pID](NetworkException e,
+                                std::shared_ptr<P2PSession> session,
                                 std::shared_ptr<bcos::boostssl::MessageFace> message) {
                 boost::ignore_unused(session);
                 // network error
@@ -198,6 +201,7 @@ void Gateway::asyncSendMessageByNodeID(const std::string& _groupID, NodeIDPtr _s
                 {
                     GATEWAY_LOG(ERROR)
                         << LOG_BADGE("Retry") << LOG_DESC("network callback")
+                        << LOG_KV("timecost", (utcTime() - startT)) << log_kv("seq", seq)
                         << LOG_KV("p2pid", p2pID) << LOG_KV("errorCode", e.errorCode())
                         << LOG_KV("errorMessage", e.what());
                     // try again
@@ -446,7 +450,7 @@ void Gateway::onReceiveP2PMessage(
                 std::to_string(_error ? _error->errorCode() : (int)protocol::CommonError::SUCCESS);
             if (_error)
             {
-                GATEWAY_LOG(DEBUG)
+                GATEWAY_LOG(WARNING)
                     << "onReceiveP2PMessage callback" << LOG_KV("code", _error->errorCode())
                     << LOG_KV("msg", _error->errorMessage()) << LOG_KV("group", groupID)
                     << LOG_KV("src", srcNodeIDPtr->shortHex())
