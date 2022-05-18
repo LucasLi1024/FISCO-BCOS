@@ -175,6 +175,10 @@ TransactionStatus MemoryStorage::enforceSubmitTransaction(Transaction::Ptr _tx)
 TransactionStatus MemoryStorage::verifyAndSubmitTransaction(
     Transaction::Ptr _tx, TxSubmitCallback _txSubmitCallback, bool _checkPoolLimit, bool _lock)
 {
+    if (m_startTime.load() == 0 && m_txsTable.size() == 0)
+    {
+        m_startTime = utcTime();
+    }
     // Note: In order to ensure that transactions can reach all nodes, transactions from P2P are not
     // restricted
     if (_checkPoolLimit && m_txsTable.size() >= m_config->poolLimit())
@@ -450,6 +454,16 @@ void MemoryStorage::batchRemove(BlockNumber _batchId, TransactionSubmitResults c
         {
             m_blockNumber = _batchId;
         }
+        m_onChainTxsCount += _txsResult.size();
+        if (m_startTime.load() > 0 && m_txsTable.size() == 0)
+        {
+            auto timeCost = (utcTime() - m_startTime);
+            auto tps = (m_onChainTxsCount * 1000) / timeCost;
+            TXPOOL_LOG(INFO) << LOG_DESC("batchRemove: stat tps") << LOG_KV("tps", tps)
+                             << LOG_KV("timeCost", timeCost);
+            m_startTime.store(0);
+            m_onChainTxsCount.store(0);
+        }
     }
     auto removeT = utcTime() - startT;
     startT = utcTime();
@@ -549,6 +563,11 @@ void MemoryStorage::batchFetchTxs(Block::Ptr _txsList, Block::Ptr _sysTxsList, s
             m_invalidTxs.insert(tx->nonce());
             continue;
         }
+        // the transaction has already been sealed for newer proposal
+        if (_avoidDuplicate && tx->sealed())
+        {
+            continue;
+        }
         /// check nonce again when obtain transactions
         // since the invalid nonce has already been checked before the txs import into the
         // txPool the txs with duplicated nonce here are already-committed, but have not been
@@ -572,11 +591,6 @@ void MemoryStorage::batchFetchTxs(Block::Ptr _txsList, Block::Ptr _sysTxsList, s
             continue;
         }
         if (_avoidTxs && _avoidTxs->count(txHash))
-        {
-            continue;
-        }
-        // the transaction has already been sealed for newer proposal
-        if (_avoidDuplicate && tx->sealed())
         {
             continue;
         }
