@@ -17,6 +17,7 @@
 #include <bcos-tars-protocol/protocol/GroupInfoCodecImpl.h>
 #include <bcos-utilities/DataConvertUtility.h>
 #include <bcos-utilities/FileUtility.h>
+#include <thread>
 
 using namespace bcos::rpc;
 using namespace bcos;
@@ -48,6 +49,8 @@ std::shared_ptr<Gateway> GatewayFactory::buildGateway(const std::string& _config
         // the pro mode require the uuid
         config->initConfig(_configPath, true);
     }
+    config->wsConfig()->setMaxMsgSize(100 * 1024 * 1024);
+    config->wsConfig()->setThreadPoolSize(std::thread::hardware_concurrency());
     config->loadP2pConnectedNodes();
     return buildGateway(config, _airVersion, _entryPoint, _gatewayServiceName);
 }
