@@ -214,15 +214,18 @@ void GatewayConfig::initP2PConfig(const boost::property_tree::ptree& _pt, bool _
     }
 
     m_nodeFileName = _pt.get<std::string>("p2p.nodes_file", "nodes.json");
+    bool networkCompress = _pt.get<bool>("p2p.network_compress", false);
 
     m_wsConfig->setSmSSL(smSSL);
     m_wsConfig->setListenIP(listenIP);
     m_wsConfig->setListenPort((uint16_t)listenPort);
+    m_wsConfig->setNetworkCompress(networkCompress);
 
     GATEWAY_CONFIG_LOG(INFO) << LOG_DESC("initP2PConfig ok!") << LOG_KV("listenIP", listenIP)
                              << LOG_KV("listenPort", listenPort) << LOG_KV("smSSL", smSSL)
                              << LOG_KV("nodePath", m_nodePath)
-                             << LOG_KV("nodeFileName", m_nodeFileName);
+                             << LOG_KV("nodeFileName", m_nodeFileName)
+                             << LOG_KV("networkCompress", networkCompress);
 }
 
 // load p2p connected peers

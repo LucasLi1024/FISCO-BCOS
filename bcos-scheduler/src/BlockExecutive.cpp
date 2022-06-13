@@ -720,17 +720,24 @@ void BlockExecutive::batchNextBlock(std::function<void(Error::UniquePtr)> callba
     {
         auto blockHeader = m_block->blockHeaderConst();
         it->nextBlockHeader(blockHeader, [status](bcos::Error::Ptr&& error) {
-            if (error)
             {
-                SCHEDULER_LOG(ERROR)
-                    << "Nextblock executor error!" << boost::diagnostic_information(*error);
-                ++status->failed;
-            }
-            else
-            {
-                ++status->success;
-            }
+                WriteGuard lock(status->x_lock);
+                if (error)
+                {
+                    SCHEDULER_LOG(ERROR)
+                        << "Nextblock executor error!" << boost::diagnostic_information(*error);
+                    ++status->failed;
+                }
+                else
+                {
+                    ++status->success;
+                }
 
+                if (status->success + status->failed < status->total)
+                {
+                    return;
+                }
+            }
             status->checkAndCommit(*status);
         });
     }

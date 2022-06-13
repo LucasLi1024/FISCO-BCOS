@@ -1016,6 +1016,8 @@ generate_config_ini() {
     sm_ssl=false
     nodes_path=${file_dir}
     nodes_file=${nodes_json_file_name}
+    ; open boost beast network compression, default: false
+    network_compress=false
 
 [rpc]
     listen_ip=${listen_ip}
@@ -1025,6 +1027,8 @@ generate_config_ini() {
     sm_ssl=false
     ; ssl connection switch, if disable the ssl connection, default: false
     ;disable_ssl=true
+    ; open boost beast network compression, default: false
+    network_compress=false
 
 [cert]
     ; directory the certificates located in
@@ -1116,6 +1120,8 @@ generate_sm_config_ini() {
     sm_ssl=true
     nodes_path=${file_dir}
     nodes_file=${nodes_json_file_name}
+    ; open boost beast network compression, default: false
+    network_compress=false
 
 [rpc]
     listen_ip=${listen_ip}
@@ -1125,6 +1131,8 @@ generate_sm_config_ini() {
     sm_ssl=true
     ;ssl connection switch, if disable the ssl connection, default: false
     ;disable_ssl=true
+    ; open boost beast network compression, default: false
+    network_compress=false
 
 [cert]
     ; directory the certificates located in

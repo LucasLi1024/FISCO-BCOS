@@ -160,22 +160,26 @@ void NodeConfig::loadRpcConfig(boost::property_tree::ptree const& _pt)
         thread_count=16
         sm_ssl=false
         disable_ssl=false
+        network_compress=false
     */
     std::string listenIP = _pt.get<std::string>("rpc.listen_ip", "0.0.0.0");
     int listenPort = _pt.get<int>("rpc.listen_port", 20200);
     int threadCount = _pt.get<int>("rpc.thread_count", 8);
     bool smSsl = _pt.get<bool>("rpc.sm_ssl", false);
     bool disableSsl = _pt.get<bool>("rpc.disable_ssl", false);
+    bool rpcNetworkCompress = _pt.get<bool>("rpc.network_compress", false);
 
     m_rpcListenIP = listenIP;
     m_rpcListenPort = listenPort;
     m_rpcThreadPoolSize = threadCount;
     m_rpcDisableSsl = disableSsl;
     m_rpcSmSsl = smSsl;
+    m_rpcNetworkCompress = rpcNetworkCompress;
 
     NodeConfig_LOG(INFO) << LOG_DESC("loadRpcConfig") << LOG_KV("listenIP", listenIP)
                          << LOG_KV("listenPort", listenPort) << LOG_KV("listenPort", listenPort)
-                         << LOG_KV("smSsl", smSsl) << LOG_KV("disableSsl", disableSsl);
+                         << LOG_KV("smSsl", smSsl) << LOG_KV("disableSsl", disableSsl)
+                         << LOG_KV("networkCompress", rpcNetworkCompress);
 }
 
 void NodeConfig::loadGatewayConfig(boost::property_tree::ptree const& _pt)
@@ -187,22 +191,26 @@ void NodeConfig::loadGatewayConfig(boost::property_tree::ptree const& _pt)
     sm_ssl=false
     nodes_path=./
     nodes_file=nodes.json
+    network_compress=false
     */
     std::string listenIP = _pt.get<std::string>("p2p.listen_ip", "0.0.0.0");
     int listenPort = _pt.get<int>("p2p.listen_port", 30300);
     std::string nodesDir = _pt.get<std::string>("p2p.nodes_path", "./");
     std::string nodesFile = _pt.get<std::string>("p2p.nodes_file", "nodes.json");
     bool smSsl = _pt.get<bool>("p2p.sm_ssl", false);
+    bool p2pNetworkCompress = _pt.get<bool>("p2p.network_compress", false);
 
     m_p2pListenIP = listenIP;
     m_p2pListenPort = listenPort;
     m_p2pNodeDir = nodesDir;
     m_p2pSmSsl = smSsl;
     m_p2pNodeFileName = nodesFile;
+    m_p2pNetworkCompress = p2pNetworkCompress;
 
     NodeConfig_LOG(INFO) << LOG_DESC("loadGatewayConfig") << LOG_KV("listenIP", listenIP)
                          << LOG_KV("listenPort", listenPort) << LOG_KV("listenPort", listenPort)
-                         << LOG_KV("smSsl", smSsl) << LOG_KV("nodesFile", nodesFile);
+                         << LOG_KV("smSsl", smSsl) << LOG_KV("nodesFile", nodesFile)
+                         << LOG_KV("networkCompress", p2pNetworkCompress);
 }
 
 void NodeConfig::loadCertConfig(boost::property_tree::ptree const& _pt)
@@ -406,16 +414,16 @@ void NodeConfig::loadStorageConfig(boost::property_tree::ptree const& _pt)
     m_keyPageSize = _pt.get<size_t>("storage.key_page_size", 0);
     if (m_keyPageSize > 0 && m_keyPageSize < 4096)
     {
-        BOOST_THROW_EXCEPTION(
-            InvalidConfig() << errinfo_comment("Please set storage.key_page_size greater than 4096"));
+        BOOST_THROW_EXCEPTION(InvalidConfig() << errinfo_comment(
+                                  "Please set storage.key_page_size greater than 4096"));
     }
     auto pd_addrs = _pt.get<std::string>("storage.pd_addrs", "127.0.0.1:2379");
     boost::split(m_pd_addrs, pd_addrs, boost::is_any_of(","));
     m_enableLRUCacheStorage = _pt.get<bool>("storage.enable_cache", true);
     m_cacheSize = _pt.get<ssize_t>("storage.cache_size", DEFAULT_CACHE_SIZE);
     NodeConfig_LOG(INFO) << LOG_DESC("loadStorageConfig") << LOG_KV("storagePath", m_storagePath)
-                         << LOG_KV("KeyPage", m_keyPageSize)
-                         << LOG_KV("storageType", m_storageType) << LOG_KV("pd_addrs", pd_addrs)
+                         << LOG_KV("KeyPage", m_keyPageSize) << LOG_KV("storageType", m_storageType)
+                         << LOG_KV("pd_addrs", pd_addrs)
                          << LOG_KV("enableLRUCacheStorage", m_enableLRUCacheStorage);
 }
 

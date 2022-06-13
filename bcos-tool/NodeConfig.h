@@ -140,6 +140,7 @@ public:
     uint32_t rpcThreadPoolSize() const { return m_rpcThreadPoolSize; }
     bool rpcSmSsl() const { return m_rpcSmSsl; }
     bool rpcDisableSsl() const { return m_rpcDisableSsl; }
+    bool rpcNetworkCompress() const { return m_rpcNetworkCompress; }
 
     // the gateway configurations
     const std::string& p2pListenIP() const { return m_p2pListenIP; }
@@ -147,6 +148,7 @@ public:
     bool p2pSmSsl() const { return m_p2pSmSsl; }
     const std::string& p2pNodeDir() const { return m_p2pNodeDir; }
     const std::string& p2pNodeFileName() const { return m_p2pNodeFileName; }
+    bool p2pNetworkCompress() const { return m_p2pNetworkCompress; }
 
     // config for cert
     const std::string& certPath() { return m_certPath; }
@@ -289,6 +291,7 @@ private:
     uint32_t m_rpcThreadPoolSize;
     bool m_rpcSmSsl;
     bool m_rpcDisableSsl = false;
+    bool m_rpcNetworkCompress = false;
 
     // config for gateway
     std::string m_p2pListenIP;
@@ -296,6 +299,7 @@ private:
     bool m_p2pSmSsl;
     std::string m_p2pNodeDir;
     std::string m_p2pNodeFileName;
+    bool m_p2pNetworkCompress = false;
 
     // config for cert
     std::string m_certPath;

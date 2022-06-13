@@ -73,6 +73,7 @@ std::shared_ptr<bcos::boostssl::ws::WsConfig> RpcFactory::initConfig(
     wsConfig->setListenPort(_nodeConfig->rpcListenPort());
     wsConfig->setThreadPoolSize(_nodeConfig->rpcThreadPoolSize());
     wsConfig->setDisableSsl(_nodeConfig->rpcDisableSsl());
+    wsConfig->setNetworkCompress(_nodeConfig->rpcNetworkCompress());
     if (_nodeConfig->rpcDisableSsl())
     {
         RPC_LOG(INFO) << LOG_BADGE("initConfig") << LOG_DESC("rpc work in disable ssl model")
